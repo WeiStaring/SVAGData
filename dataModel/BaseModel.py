@@ -13,21 +13,16 @@ class WashDataModel(BaseModel):
         super().__init__()
 
     def washData(self):
-        # 导入原始数据
         df = pd.read_csv(self.dataDir+'data.csv')
-        # 导入基站坐标信息
         station = pd.read_csv(self.dataDir+'station.csv')
-
-        # 去除空间信息残缺的记录条目（imsi、lac_id、cell_id中为空）
+        print(df.info())
         df.dropna(subset=['imsi', 'lac_id', 'cell_id'], inplace=True)
-
+        #将基站id转成字符
         df['lac_id'] = df['lac_id'].astype(np.long).astype(str)
         df['cell_id'] = df['cell_id'].astype(np.long).astype(str)
 
         # 抽取timestamp,imsi,lac_id,cell_id 四个字段
-        to_drop = ['phone', 'timestamp1', 'tmp0', 'tmp0', 'tmp1', 'nid', 'npid']
-        df.drop(to_drop, inplace=True, axis=1)
-
+        df.drop(['phone', 'timestamp1', 'tmp0', 'tmp0', 'tmp1', 'nid', 'npid'], inplace=True, axis=1)
         # 去除imsi中，包含特殊字符的数据条目（‘#’,’*’,’^’） 8条
         df['imsi'] = df['imsi'].astype(str)
         df = df[~df['imsi'].str.contains('\#')]
@@ -38,7 +33,7 @@ class WashDataModel(BaseModel):
         df_test = df_new[1538496000000<=df_new['timestamp']]
         df_test = df_test[df_test['timestamp']<1538582400000]
 
-        # 去除两数据源关联后经纬度为空的数据条目 7452->7444
+        # 去除两数据源关联后经纬度为空的数据条目
         df_test['laci'] = df_test['lac_id'].str.cat(df_test['cell_id'], sep='-')
         df_test = df_test[df_test['laci'].isin(station['laci'])]
         df_res = pd.merge(df_test, station)
