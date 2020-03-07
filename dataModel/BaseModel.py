@@ -15,10 +15,6 @@ class WashDataModel(BaseModel):
     def washData(self):
         # 导入原始数据
         df = pd.read_csv(self.dataDir+'data.csv')
-        print(df.info())
-        print(np.max(df['timestamp']))
-        print(np.min(df['timestamp']))
-
         # 导入基站坐标信息
         station = pd.read_csv(self.dataDir+'station.csv')
 
