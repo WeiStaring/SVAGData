@@ -52,4 +52,4 @@ class WashDataModel(BaseModel):
         # 输出csv
         print(df_res.info())
 
-        df_res.to_csv(self.resultDataDir+'dataAfterWash.csv', index=False)
+        df_res.to_csv(self.dataDir+'dataAfterWash.csv', index=False)
