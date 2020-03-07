@@ -35,14 +35,16 @@ class WashDataModel(BaseModel):
         df_new = df_new[~df['imsi'].str.contains('\*')]
 
         # timestamp时间戳转换格式 ‘20190603000000’--年月日时分秒(我认为没有必要改时间戳)
+        # 时区问题，将原先时间戳+28800000（8h对应ms数）
+        df_new['timestamp']=df_new['timestamp'].astype(np.long)+28800000
         df_new['timestamp'] = pd.to_datetime(df_new['timestamp'], unit='ms')
 
-        # 去除干扰数据条目（不是2018.10.03当天的数据）10137条->7452条
+        # 去除干扰数据条目（不是2018.10.03当天的数据）10137条->？条
         df_new = df_new.astype(str)
         df_test = df_new[df_new['timestamp'].str.contains('2018-10-03')]
         df_test.head()
 
-        # 去除两数据源关联后经纬度为空的数据条目 7452->7444
+        # 去除两数据源关联后经纬度为空的数据条目 ？->？
         df_test_2 = df_test.astype(str)
         df_test_2['laci'] = df_test['lac_id'].str.cat(df_test['cell_id'], sep='-')
         df_test_3 = df_test_2[df_test_2['laci'].isin(station['laci'])]
