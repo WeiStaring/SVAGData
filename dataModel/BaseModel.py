@@ -37,9 +37,7 @@ class WashDataModel(BaseModel):
         # 去除干扰数据条目（不是2018.10.03当天的数据）10137条->7452条
         df_test = df_new[1538496000000<=df_new['timestamp']]
         df_test = df_test[df_test['timestamp']<1538582400000]
-        print(df_test.info())
-        print(np.max(df_test['timestamp']))
-        print(np.min(df_test['timestamp']))
+
         # 去除两数据源关联后经纬度为空的数据条目 7452->7444
         df_test['laci'] = df_test['lac_id'].str.cat(df_test['cell_id'], sep='-')
         df_test = df_test[df_test['laci'].isin(station['laci'])]
