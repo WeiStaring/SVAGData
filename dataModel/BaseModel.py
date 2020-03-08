@@ -15,6 +15,7 @@ class WashDataModel(BaseModel):
     def washData(self):
         df = pd.read_csv(self.dataDir+'data.csv')
         station = pd.read_csv(self.dataDir+'station.csv')
+        station['plot']=station.index
         print(df.info())
         df.dropna(subset=['imsi', 'lac_id', 'cell_id'], inplace=True)
         #将基站id转成字符
@@ -39,12 +40,14 @@ class WashDataModel(BaseModel):
         df_res = pd.merge(df_test, station)
 
         # 剔除经纬度在第一个参数里加入‘longtidue’和‘latitude’
-        df_res.drop(["lac_id","cell_id"], inplace=True, axis=1)
+        df_res.drop(["lac_id","cell_id",'laci'], inplace=True, axis=1)
+        station.drop(['laci'],inplace=True,axis=1)
 
-        # TODO：
         # 以人为单位，按时间正序排序
         df_res = df_res.sort_values(['imsi','timestamp'])
         # 输出csv
         print(df_res.info())
 
         df_res.to_csv(self.dataDir+'dataAfterWash.csv', index=False)
+        station.to_csv(self.resultDataDir+'newStation.csv',index=False)
+

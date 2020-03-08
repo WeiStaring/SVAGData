@@ -27,3 +27,16 @@ class AnalysisModel(VisualModel):
         statis['records'].hist(bins=50)
         plt.show()
         self.scatter(station['longitude'], station['latitude'], c)
+
+    def checkRecords(self):
+        df = pd.read_csv(self.dataDir+'dataAfterWash.csv')
+        df['timestamp']-=1538496000000
+        df['timestamp']/=1000
+        #使用5分钟作为时间槽 9849->8179
+        df['timestamp'] /= 60*5
+        df['timestamp'] = df['timestamp'].astype(int)
+        print(df.info())
+        df = df.drop_duplicates(['timestamp','laci','imsi'])
+        print(df.info())
+        # df['timestamp'].hist(bins=288)
+        # plt.show()

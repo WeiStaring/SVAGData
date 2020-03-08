@@ -1,11 +1,16 @@
 from dataModel.BaseModel import *
+from dataModel.SpaceFlowModel import *
 from dataModel.VisualModel import *
-def dataPipeline():
+
+def modelPipeline():
     washDataModel = WashDataModel()
     washDataModel.washData()
+    # spaceFlowModel = SpaceFlowModel()
+    # spaceFlowModel.dataPipeline()
 
 def analysis():
     analysisModel = AnalysisModel()
-    analysisModel.checkStation()
+    # analysisModel.checkStation()
+    analysisModel.checkRecords()
 
-analysis()
+modelPipeline()
