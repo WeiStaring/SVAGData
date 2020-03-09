@@ -5,14 +5,14 @@
 2. dataAfterWash.cdv：粗加工数据
 3. station.csv：基站数据
 4. vehicle.csv：交通站点数据
-##dataModel
+## dataModel
 用以存储数据处理模型
 1. BaseModel：数据处理基类和粗加工模型
 2. SpaceFlowModel：空间流量分布数据模型
 3. VisualModel：数据分析模型（出图形）
-##images
+## images
 用以存储结果图片
-##resultData
+## resultData
 用以存储加工终点的数据集
 # 粗加工
 和参考的数据清洗规则有基础不同点如下
