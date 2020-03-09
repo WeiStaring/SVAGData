@@ -3,10 +3,10 @@ from dataModel.SpaceFlowModel import *
 from dataModel.VisualModel import *
 
 def modelPipeline():
-    washDataModel = WashDataModel()
-    washDataModel.washData()
-    # spaceFlowModel = SpaceFlowModel()
-    # spaceFlowModel.dataPipeline()
+    # washDataModel = WashDataModel()
+    # washDataModel.washData()
+    spaceFlowModel = SpaceFlowModel()
+    spaceFlowModel.dataPipeline()
 
 def analysis():
     analysisModel = AnalysisModel()

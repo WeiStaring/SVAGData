@@ -1,11 +1,17 @@
 import pandas as pd
 import numpy as np
+import json
 
 class BaseModel:
     def __init__(self):
         self.dataDir = 'data/'
         self.resultDataDir = 'resultData/'
         self.imagesDir = 'imagesDir/'
+
+    def saveJson(self,file,filename):
+        with open(self.resultDataDir+filename, 'w') as file_obj:
+            json.dump(file, file_obj)
+        print('saveJson accomplished')
 
 
 class WashDataModel(BaseModel):
