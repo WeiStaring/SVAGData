@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from dataModel.STDBSCAN import *
+from utils.STDBSCAN import *
 import time
+
 
 def plotFeature(df_clustering):
     data=df_clustering[['longitude', 'latitude']].values
@@ -53,7 +54,7 @@ for i in range(0,userNum):
 
 
     # # 可视化
-    # plotFeature(df_clustering)
+    plotFeature(df_clustering)
 
 #聚类操作的时间
 end = time.clock()
