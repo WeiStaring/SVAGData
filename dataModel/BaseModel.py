@@ -20,14 +20,12 @@ class WashDataModel(BaseModel):
 
     def washData(self):
         df = pd.read_csv(self.dataDir+'data.csv')
-        station = pd.read_csv(self.dataDir+'station.csv')
-        station['plot']=station.index
-        print(df.info())
+        # 为了精度，用str读取浮点数
+        station = pd.read_csv(self.dataDir+'drop_duplicates_station.csv',dtype={'longitude': str, 'latitude': str})
         df.dropna(subset=['imsi', 'lac_id', 'cell_id'], inplace=True)
         #将基站id转成字符
         df['lac_id'] = df['lac_id'].astype(np.long).astype(str)
         df['cell_id'] = df['cell_id'].astype(np.long).astype(str)
-
         # 抽取timestamp,imsi,lac_id,cell_id 四个字段
         df.drop(['phone', 'timestamp1', 'tmp0', 'tmp0', 'tmp1', 'nid', 'npid'], inplace=True, axis=1)
         # 去除imsi中，包含特殊字符的数据条目（‘#’,’*’,’^’） 8条
@@ -36,7 +34,6 @@ class WashDataModel(BaseModel):
         df = df[~df['imsi'].str.contains('\^')]
         df_new = df[~df['imsi'].str.contains('\*')]
 
-        # 去除干扰数据条目（不是2018.10.03当天的数据）10137条->7452条
         df_test = df_new[1538496000000<=df_new['timestamp']]
         df_test = df_test[df_test['timestamp']<1538582400000]
 
@@ -48,7 +45,7 @@ class WashDataModel(BaseModel):
         # 剔除经纬度在第一个参数里加入‘longtidue’和‘latitude’
         df_res.drop(["lac_id","cell_id",'laci'], inplace=True, axis=1)
         station.drop(['laci'],inplace=True,axis=1)
-
+        station = station.drop_duplicates(['newPlot'])
         # 以人为单位，按时间正序排序
         df_res = df_res.sort_values(['imsi','timestamp'])
         # 输出csv

@@ -3,17 +3,20 @@
 用以存储原始数据和加工中的数据
 1. data.csv:原始数据
 2. dataAfterWash.cdv：粗加工数据
-3. station.csv：基站数据
+3. station.csv：基站数据，长度2793
 4. vehicle.csv：交通站点数据
+5.drop_duplicates_station.csv 新基站数据，位置相同基站的newPlot字段相同，长度2793
 ## dataModel
 用以存储数据处理模型
 1. BaseModel：数据处理基类和粗加工模型
 2. SpaceFlowModel：空间流量分布数据模型
 3. VisualModel：数据分析模型（出图形）
+    1. 
 ## images
 用以存储结果图片
 ## resultData
 用以存储加工终点的数据集
+1. newStation.csv drop_duplicates_station.csv相同位置去重，长度1519
 # 粗加工
 和参考的数据清洗规则有基础不同点如下
 1. 时间使用时间戳，而非20181003....，原因是虽然后者容易理解，但不容易转化。而前者易计算，需要时可以一步转化为后者

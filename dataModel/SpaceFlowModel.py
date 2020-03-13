@@ -22,12 +22,12 @@ class SpaceFlowModel(BaseModel):
         # 使用5分钟作为时间槽 9849->8179
         df['timestamp'] /= 60 * slot
         df['timestamp'] = df['timestamp'].astype(int)
-        df = df.drop_duplicates(['timestamp', 'plot', 'imsi'])
+        df = df.drop_duplicates(['timestamp', 'newPlot', 'imsi'])
         return df
 
     def SlotRecords2Matrix(self, df):
         json = [{} for i in range(288)]
-        for name, gp in df.groupby(['timestamp', 'plot']):
+        for name, gp in df.groupby(['timestamp', 'newPlot']):
             time, plot = name
             json[int(time)][int(plot)] = len(gp)
         return json

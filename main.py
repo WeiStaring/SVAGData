@@ -11,6 +11,7 @@ def modelPipeline():
 def analysis():
     analysisModel = AnalysisModel()
     # analysisModel.checkStation()
-    analysisModel.checkRecords()
+    analysisModel.processStation()
+    # analysisModel.checkRecords()
 
 modelPipeline()
