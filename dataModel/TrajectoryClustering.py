@@ -20,8 +20,19 @@ def plotFeature(df_clustering):
         ax.scatter(subCluster[:,0], subCluster[:,1], c=colorSytle, s=20)
     plt.show()
 
+def findPlot(lat, lon, station):
+    min = 1000
+    for index, row in station.iterrows():
+        dist = (lat - row["latitude"]) ** 2 + (lon - row["longitude"]) ** 2
+        if (dist < min):
+            id = row["newPlot"]
+            min = dist
+
+    return int(id)
+
 # 读取数据
 df=pd.read_csv('../data/dataAfterWash.csv')
+station=pd.read_csv('../resultData/newStation.csv')
 
 # 调整时间格式
 df['date_time']=pd.to_datetime(df['timestamp']+28800000,unit='ms')
@@ -43,7 +54,7 @@ start = time.clock()
 
 cluster_res=pd.DataFrame(columns=['imsi', 'longitude', 'latitude','newPlot','date_time','cluster'])
 
-for i in range(0,2):
+for i in range(0,userNum):
     tempUser=df[df['imsi'].isin([listType[i]])]
     # 聚类
     df_clustering = ST_DBSCAN(tempUser, spatial_threshold, temporal_threshold, min_neighbors)
@@ -53,7 +64,7 @@ for i in range(0,2):
 
 # 聚类操作的时间
 end = time.clock()
-print('finish all in %s s' % str(end - start))
+print('cluster finish all in %s s' % str(end - start))
 
 # # 将pandas.timestamp还原成原始的unix时间戳
 # cluster_res['timestamp']=[t.value/1000000-28800000 for t in cluster_res.date_time]
@@ -81,8 +92,8 @@ tempRes=pd.DataFrame(columns=('imsi','longitude','latitude','newPlot','start','e
     遍历tempRes将每一条的start和下一条的end形成一条新的数据
 
 """""
-
-for i in range(0,2):
+start2 = time.clock()
+for i in range(0,userNum):
     tempUser = cluster_res[cluster_res['imsi'].isin([listType[i]])]
     userID=tempUser.iloc[0,0]
 
@@ -101,7 +112,12 @@ for i in range(0,2):
             end=tempCluster['date_time'].max()
             lat=round(tempCluster['latitude'].mean(),8)
             lon=round(tempCluster['longitude'].mean(),8)
-            plot=round(tempCluster['newPlot'].mode()[0],0)
+
+
+            # plot=round(tempCluster['newPlot'].mode()[0],0)
+            # plot修改为lat和lon的nearest plot
+            plot=findPlot(lat,lon,station)
+
 
             stay_tmp = pd.DataFrame([userID,lon,lat,plot,start,end]).T
             # 修改当前数据的column一致
@@ -121,8 +137,9 @@ for i in range(0,2):
 
 stayPoint=stayPoint.sort_values(['imsi','start'])
 tempRes=tempRes.sort_values(['imsi','start'])
-
-for i in range(0,2):
+end2 = time.clock()
+print(end2 - start2)
+for i in range(0,userNum):
     tempUser = tempRes[tempRes['imsi'].isin([listType[i]])]
     userID = tempUser.iloc[0, 0]
     entryNum=tempUser.shape[0]
@@ -145,6 +162,9 @@ travelPath.to_csv('../resultData/travelPath.csv', index=False)
 
 
 # tempRes.to_csv('../resultData/tempRes.csv', index=False)
+
+
+
 
 
 
