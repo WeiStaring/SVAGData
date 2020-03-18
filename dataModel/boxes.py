@@ -19,8 +19,8 @@ with open(fileName, newline='', encoding='UTF-8') as csvfile:
         
     lat = [41.08805847, 42.50167847]
     lng = [122.3507919, 124.00028229999998]
-    latStep = 0.016
-    lngStep = 0.02
+    latStep = 0.008
+    lngStep = 0.01
     
     boxes = [];
     cnt = 0
