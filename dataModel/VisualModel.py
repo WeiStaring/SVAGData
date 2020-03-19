@@ -20,7 +20,7 @@ class AnalysisModel(VisualModel):
         将位置相同的基站标上同样的类别记号
         :return:
         """
-        station = pd.read_csv('data/station.csv', dtype={'longitude': str, 'latitude': str})
+        station = pd.read_csv(self.dataDir+'station.csv', dtype={'longitude': str, 'latitude': str})
         station['newPlot'] = -1
         index = 0
         print(station.info())
@@ -36,7 +36,7 @@ class AnalysisModel(VisualModel):
                 station.iloc[i,3] = dic[(lon, lat)]
 
         print(station.info())
-        station.to_csv(self.dataDir + 'drop_duplicates_station.csv', index=False)
+        station.to_csv(self.resultDataDir + 'drop_duplicates_station.csv', index=False)
 
     def checkStation(self):
         """
@@ -44,7 +44,7 @@ class AnalysisModel(VisualModel):
         :return:
         """
         # df = pd.read_csv('data/dataAfterWash.csv')
-        station = pd.read_csv('data/station.csv', dtype={'longitude': str, 'latitude': str})
+        station = pd.read_csv(self.dataDir+'station.csv', dtype={'longitude': str, 'latitude': str})
         print(station.info())
         # station['longitude'] = station['longitude'].astype(str)
         # station['latitude'] = station['latitude'].astype(str)
@@ -63,7 +63,7 @@ class AnalysisModel(VisualModel):
         # self.scatter(station['longitude'], station['latitude'], c)
 
     def checkRecords(self):
-        df = pd.read_csv(self.dataDir + 'dataAfterWash.csv')
+        df = pd.read_csv(self.resultDataDir + 'dataAfterWash.csv')
         df['timestamp'] -= 1538496000000
         df['timestamp'] /= 1000
         # 使用5分钟作为时间槽 9849->8179

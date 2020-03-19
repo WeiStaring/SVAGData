@@ -59,8 +59,10 @@ def retrieve_neighbors(index_center, df, spatial_threshold, temporal_threshold):
     center_point = df.loc[index_center]
 
     # filter by time
-    min_time = center_point['date_time'] - timedelta(minutes=temporal_threshold)
-    max_time = center_point['date_time'] + timedelta(minutes=temporal_threshold)
+    min_time = center_point['date_time'] - 0.5*60*60*1000
+    max_time = center_point['date_time'] + 0.5*60*60*1000
+    # min_time = center_point['date_time'] - timedelta(minutes=temporal_threshold)
+    # max_time = center_point['date_time'] + timedelta(minutes=temporal_threshold)
     df = df[(df['date_time'] >= min_time) & (df['date_time'] <= max_time)]
 
     # filter by distance

@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from dataModel.STDBSCAN import *
+from utils.STDBSCAN import *
 import time
 import warnings
 
@@ -29,8 +29,8 @@ def findPlot(lat, lon, station):
     return id
 
 # 读取数据
-df=pd.read_csv('../data/dataAfterWash.csv')
-station=pd.read_csv('../resultData/newStation.csv')
+df=pd.read_csv('../resultData/dataAfterWash.csv')
+station=pd.read_csv('../finalData/newStation.csv')
 
 # 调整时间格式
 df['date_time']=pd.to_datetime(df['timestamp']+28800000,unit='ms')

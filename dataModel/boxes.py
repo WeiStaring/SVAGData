@@ -1,6 +1,7 @@
 import json
 import csv
 import math
+import numpy as np
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -19,10 +20,11 @@ with open(fileName, newline='', encoding='UTF-8') as csvfile:
         
     lat = [41.08805847, 42.50167847]
     lng = [122.3507919, 124.00028229999998]
+    # 122.3507919,41.40496826 122.8225937,41.08805847
     latStep = 0.008
     lngStep = 0.01
     
-    boxes = [];
+    boxes = []
     cnt = 0
     mp = set()
     

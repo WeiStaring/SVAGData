@@ -7,12 +7,17 @@ class BaseModel:
         self.dataDir = 'data/'
         self.resultDataDir = 'resultData/'
         self.imagesDir = 'imagesDir/'
+        self.finalDir = 'finalData/'
 
-    def saveJson(self,file,filename):
-        with open(self.resultDataDir+filename, 'w') as file_obj:
+    def saveJson(self,file,path):
+        with open(path, 'w') as file_obj:
             json.dump(file, file_obj)
         print('saveJson accomplished')
 
+    def loadJson(self,path):
+        f = open(path, encoding='utf-8')
+        res = json.load(f)
+        return res
 
 class WashDataModel(BaseModel):
     def __init__(self):
@@ -51,6 +56,33 @@ class WashDataModel(BaseModel):
         # 输出csv
         print(df_res.info())
 
-        df_res.to_csv(self.dataDir+'dataAfterWash.csv', index=False)
-        station.to_csv(self.resultDataDir+'newStation.csv',index=False)
+        df_res.to_csv(self.resultDataDir+'dataAfterWash.csv', index=False)
+        station.to_csv(self.finalDir+'newStation.csv',index=False)
+
+    def station2box(self):
+        json = self.loadJson(self.dataDir+"stationBoxes_0.008_0.01_653.json")
+        station = pd.read_csv(self.finalDir+"newStation.csv")
+        json = json['features']
+        boxList=[]
+        for item in json:
+            coord = item['geometry']['coordinates']
+            boxList.append([coord[0][0],coord[0][2]])
+        dic={}
+        for i in range(len(boxList)):
+            c1,c2 = boxList[i]
+            x1 = c1[0]
+            x2 = c2[0]
+            y1 = c1[1]
+            y2 = c2[1]
+            subStationDf = station[(x1<=station['longitude'])&(station['longitude']<=x2)]
+            subStationDf = subStationDf[(y1<=subStationDf['latitude'])&(subStationDf['latitude']<=y2)]
+            for j in range(len(subStationDf)):
+                plot = subStationDf.iloc[j]['newPlot']
+                if dic.__contains__(plot):
+                    print('error')
+                dic[int(plot)]=i
+        self.saveJson(dic,self.finalDir+'station2box.json')
+
+
+
 

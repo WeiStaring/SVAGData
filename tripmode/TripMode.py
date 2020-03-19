@@ -76,10 +76,8 @@ df_travel['startstamp'] = (startstamp.values - np.datetime64('1970-01-01T08:00:0
 endstamp = pd.to_datetime(df_travel['end'])
 df_travel['endstamp'] = (endstamp.values - np.datetime64('1970-01-01T08:00:00Z')) / np.timedelta64(1, 'ms')
 df_travel['mytime']=df_travel['endstamp']-df_travel['startstamp']
-df_travel
 
 df_station=pd.read_csv("newStation.csv")
-df_station
 
 #获取起点坐标
 def getstartpoint(origin_path,newPlot):
@@ -108,15 +106,15 @@ for item in df_travel.iterrows():
     res=getduration(origin_path,result_path,MyAK,mytime)
     df_travel.loc[[item[0]],'type']=res
 
-df_travel
+
 
 df_1=df_travel
 del df_1['startstamp']
 del df_1['endstamp']
 del df_1['mytime']
 
-df_1
-df_1.to_csv( 'TripModeResult.csv',index=None)
+
+df_1.to_csv('TripModeResult.csv',index=None)
 
 
 

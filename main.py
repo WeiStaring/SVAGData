@@ -1,10 +1,15 @@
 from dataModel.BaseModel import *
-from dataModel.SpaceFlowModel import *
+from dataModel.SpaceVolumeModel import *
 from dataModel.VisualModel import *
+from dataModel.SpaceFlowModel import *
+
 
 def modelPipeline():
-    # washDataModel = WashDataModel()
+    washDataModel = WashDataModel()
     # washDataModel.washData()
+    # washDataModel.station2box()
+    # spaceVolumeModel = SpaceVolumeModel()
+    # spaceVolumeModel.dataPipeline()
     spaceFlowModel = SpaceFlowModel()
     spaceFlowModel.dataPipeline()
 
