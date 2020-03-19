@@ -35,7 +35,7 @@
 6. 出行数据中，观察得到最大weight为3。
 
 ##tripmode文件夹：
-1.TripMode.py计算出行方式，其返回值：1-驾车，2-骑行，3-步行，4-公交
+1.TripMode.py计算出行方式，其返回值：1-驾车，2-步行，3-骑行，4-公交
 2.TripModeResult.csv保存出行方式结果，存放在type列中
 3.person1为其中一个人轨迹
 4.Visualize可视化person1轨迹及其出行方式，结果在tripmode1.png中
