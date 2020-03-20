@@ -74,3 +74,26 @@ class AnalysisModel(VisualModel):
         print(df.info())
         # df['timestamp'].hist(bins=288)
         # plt.show()
+
+    def checkTripMode(self):
+        df = pd.read_csv(self.finalDir + 'TripModeResult.csv')
+        dic={1:'red',2:'green',3:'pink',4:'blue'}
+        for name,gp in df.groupby(['imsi']):
+            print(gp.iloc[:,5:10])
+            x=[]
+            y=[]
+            z=[]
+            for j in range(len(gp)-1):
+                sub = gp.iloc[j]
+                x.append([sub['startlatitude'],sub['endlatitude']])
+                y.append([sub['startlongitude'],sub['endlongitude']])
+                z.append(sub['type'])
+            print(x,y)
+            for i in range(len(x)):
+                plt.scatter(x[i], y[i], color='black', s=5)
+                plt.arrow(x[i][0], y[i][0], x[i][1] - x[i][0], y[i][1] - y[i][0], width=0.0002, length_includes_head=True,
+                                  head_width=0.005, head_length=0.005, fc='k', ec='k', lw=0.02, alpha=0.75,color='red')
+                plt.plot(x[i], y[i], color=dic[z[i]],label='sin')
+
+            plt.show()
+

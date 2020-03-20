@@ -22,7 +22,7 @@ class SpaceFlowModel(BaseModel):
         # self.getClusterDf()
         # self.getStay()
         # self.getTrip()
-        self.aggregateStay()
+        # self.aggregateStay()
         self.aggregateTrip()
 
     def dataProcess(self):
@@ -204,12 +204,12 @@ class SpaceFlowModel(BaseModel):
         df['end'] /= 60 * slot
         df['end'] = df['end'].astype(int)
         json = [{} for i in range(288)]
-        record={}
         for name, gp in df.groupby(['start', 'end', 'startPlot', 'endPlot']):
             start, end, startPlot, endPlot = name
-
             startPlot = self.station2box[str(startPlot)]
             endPlot = self.station2box[str(endPlot)]
+            if startPlot==endPlot:
+                continue
             for i in range(start, end + 1):
                 if not json[i].__contains__(''+str(startPlot)+'-'+str(endPlot)):
                     json[i][''+str(startPlot)+'-'+str(endPlot)]={'source': str(startPlot), 'target': str(endPlot), 'weight': len(gp)}
