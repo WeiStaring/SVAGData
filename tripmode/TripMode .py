@@ -14,8 +14,8 @@ np.set_printoptions(suppress=True)
 
 #MyAK='jt2ebs4tgp1TyHowp3Ol4sOheMGH8S0u'
 # MyAK='Pju1uy3aoutZxA16NX0xMgtwxX1xoqhs'
+#MySK=''
 MySK=''
-
 
 #调用百度API判断交通方式
 def getduration(origin_path,result_path,MyAK,mytime):
