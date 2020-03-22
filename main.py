@@ -5,7 +5,7 @@ from dataModel.SpaceFlowModel import *
 
 
 def modelPipeline():
-    washDataModel = WashDataModel()
+    # washDataModel = WashDataModel()
     # washDataModel.washData()
     # washDataModel.station2box()
     # spaceVolumeModel = SpaceVolumeModel()
@@ -18,6 +18,6 @@ def analysis():
     # analysisModel.checkStation()
     # analysisModel.processStation()
     # analysisModel.checkRecords()
-    analysisModel.checkTripMode()
+    analysisModel.checkTrip1()
 
-modelPipeline()
+analysis()

@@ -21,9 +21,9 @@ class SpaceFlowModel(BaseModel):
         # self.dataProcess()
         # self.getClusterDf()
         # self.getStay()
-        # self.getTrip()
+        self.getTrip()
         # self.aggregateStay()
-        self.aggregateTrip()
+        # self.aggregateTrip()
 
     def dataProcess(self):
         # self.df['date_time'] = pd.to_datetime(self.df['timestamp'] + 28800000, unit='ms')
@@ -94,6 +94,8 @@ class SpaceFlowModel(BaseModel):
 
     def getTrip(self):
         cluster_res = pd.read_csv(self.resultDataDir + 'clusterRes.csv')
+        cluster_res['time'] = pd.to_datetime(cluster_res['date_time'] + 28800000, unit='ms')
+        cluster_res = pd.merge(cluster_res,self.station)
         cluster_res = cluster_res.drop(['longitude', 'latitude'], axis=1)
         tempRes = pd.DataFrame(columns=('imsi', 'start', 'end', 'startPlot', 'endPlot','cluster'))
         # 按id划分用户
