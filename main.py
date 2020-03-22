@@ -20,4 +20,4 @@ def analysis():
     # analysisModel.checkRecords()
     analysisModel.checkTrip1()
 
-analysis()
+modelPipeline()
