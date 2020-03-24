@@ -40,3 +40,4 @@
 3.person1为其中一个人轨迹
 4.Visualize可视化person1轨迹及其出行方式，结果在tripmode1.png中
 5. newTripModeResult.csv中，distance为规划路线实际距离，duration为规划所需时间，speed为所选择的出行方式的速度，real_speed为实际速度
+6. 由可视化结果可以看出，实际速度存在较多异常值，实际所用时间与四种规划时间差距较大造成
