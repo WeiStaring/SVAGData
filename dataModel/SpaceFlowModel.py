@@ -21,9 +21,9 @@ class SpaceFlowModel(BaseModel):
         # self.dataProcess()
         # self.getClusterDf()
         # self.getStay()
-        # self.getTrip()
+        self.getTrip()
         # self.aggregateStay()
-        self.aggregateTrip()
+        # self.aggregateTrip()
 
     def dataProcess(self):
         # self.df['date_time'] = pd.to_datetime(self.df['timestamp'] + 28800000, unit='ms')
@@ -104,9 +104,15 @@ class SpaceFlowModel(BaseModel):
             userID = tempUser.iloc[0, 0]
             clusterType = tempUser['cluster'].unique()
             clusterNum = clusterType.size
+            # 删除被夹在中间的-1,只能删除1，1,1，-1,1,1单层-1.
+            tempUser['flag']=1
+            for j in range(1,len(tempUser)-1):
+                if tempUser.iloc[j]['cluster']==-1 and tempUser.iloc[j-1]['cluster']!=-1 and tempUser.iloc[j-1]['cluster']==tempUser.iloc[j+1]['cluster']:
+                    tempUser.iloc[j,-1]=0
+            tempUser = tempUser[tempUser['flag']==1]
+            tempUser = tempUser.drop(['flag'],axis=1)
 
             for j in range(0, clusterNum):
-
                 tempCluster = tempUser[tempUser['cluster'].isin([clusterType[j]])]
                 clusterID = tempCluster.iloc[0, 3]
 
@@ -119,6 +125,7 @@ class SpaceFlowModel(BaseModel):
                     endPlot = tempCluster.iloc[tempCluster.shape[0] - 1, 1]
                     temp = pd.DataFrame([userID, start, end, startPlot, endPlot,clusterID]).T
                     # 修改当前数据的column一致
+
                     temp.columns = tempRes.columns
                     # 把两个dataframe合并，需要设置 ignore_index=True
                     tempRes = pd.concat([tempRes, temp], ignore_index=True)
