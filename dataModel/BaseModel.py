@@ -60,7 +60,7 @@ class WashDataModel(BaseModel):
         station.to_csv(self.finalDir+'newStation.csv',index=False)
 
     def station2box(self):
-        json = self.loadJson(self.dataDir+"stationBoxes_0.008_0.01_653.json")
+        json = self.loadJson(self.dataDir+"stationBoxes_204.json")
         station = pd.read_csv(self.finalDir+"newStation.csv")
         json = json['features']
         boxList=[]

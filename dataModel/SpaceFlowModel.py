@@ -21,9 +21,9 @@ class SpaceFlowModel(BaseModel):
         # self.dataProcess()
         # self.getClusterDf()
         # self.getStay()
-        self.getTrip()
-        # self.aggregateStay()
-        # self.aggregateTrip()
+        # self.getTrip()
+        self.aggregateStay()
+        self.aggregateTrip()
 
     def dataProcess(self):
         # self.df['date_time'] = pd.to_datetime(self.df['timestamp'] + 28800000, unit='ms')
@@ -184,6 +184,7 @@ class SpaceFlowModel(BaseModel):
         df['end'] /= 60 * slot
         df['end'] = df['end'].astype(int)
         json = [{} for i in range(288)]
+        total=0
         for name, gp in df.groupby(['newPlot', 'start', 'end']):
             plot, start, end = name
             for i in range(start, end + 1):
@@ -192,6 +193,8 @@ class SpaceFlowModel(BaseModel):
                     json[i][plot] += len(gp)
                 else:
                     json[i][plot] = len(gp)
+            total+=len(gp)
+        print('stay',total)
         self.saveJson(json, self.finalDir + 'spaceStayDataset.json')
         return json
 
@@ -211,6 +214,7 @@ class SpaceFlowModel(BaseModel):
         df['end'] /= 60 * slot
         df['end'] = df['end'].astype(int)
         json = [{} for i in range(288)]
+        total=0
         for name, gp in df.groupby(['start', 'end', 'startPlot', 'endPlot']):
             start, end, startPlot, endPlot = name
             startPlot = self.station2box[str(startPlot)]
@@ -222,8 +226,8 @@ class SpaceFlowModel(BaseModel):
                     json[i][''+str(startPlot)+'-'+str(endPlot)]={'source': str(startPlot), 'target': str(endPlot), 'weight': len(gp)}
                 else:
                     json[i][''+str(startPlot)+'-'+str(endPlot)]['weight']+=len(gp)
-                    print(json[i][''+str(startPlot)+'-'+str(endPlot)]['weight'])
-
+            total+=len(gp)
+        print('trip',total)
         temp = [[] for i in range(288)]
         for i in range(len(json)): # time
             for key in json[i].keys():

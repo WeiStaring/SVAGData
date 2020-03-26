@@ -5,13 +5,13 @@ from dataModel.SpaceFlowModel import *
 
 
 def modelPipeline():
-    # washDataModel = WashDataModel()
+    washDataModel = WashDataModel()
     # washDataModel.washData()
     # washDataModel.station2box()
-    # spaceVolumeModel = SpaceVolumeModel()
-    # spaceVolumeModel.dataPipeline()
-    spaceFlowModel = SpaceFlowModel()
-    spaceFlowModel.dataPipeline()
+    spaceVolumeModel = SpaceVolumeModel()
+    spaceVolumeModel.dataPipeline()
+    # spaceFlowModel = SpaceFlowModel()
+    # spaceFlowModel.dataPipeline()
 
 def analysis():
     analysisModel = AnalysisModel()
