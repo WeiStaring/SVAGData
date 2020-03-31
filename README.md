@@ -41,3 +41,4 @@
 4. Visualize可视化person1轨迹及其出行方式，结果在tripmode1.png中
 5. newTripModeResult.csv中，distance为规划路线实际距离，duration为规划所需时间，speed为所选择的出行方式的速度，real_speed为实际速度
 6. 由可视化结果可以看出，实际速度存在较多异常值， 实际所用时间与四种规划时间差距较大造成
+7. newTripModeResult.csv中,更新了判别类型4中是否含有地铁。bustype中是该次出行每段轨迹的交通方式（0为公交，1为地铁）。hasSubway是表示该次出行是否含有地铁（YES为表示含有，NO表示没有地铁）。
