@@ -29,12 +29,17 @@ class SpaceVolumeModel(BaseModel):
 
     def SlotRecords2Matrix(self, df):
         json = [{} for i in range(288)]
-        for name, gp in df.groupby(['timestamp', 'newPlot']):
-            time, plot = name
-            if json[int(time)].__contains__(self.station2box[str(plot)]):  # 网格层次会重复
-                json[int(time)][self.station2box[str(plot)]] += len(gp)
-            else:
-                json[int(time)][self.station2box[str(plot)]] = len(gp)
+        for name, gp in df.groupby(['imsi']):
+            for i in range(len(gp)-1):
+                now = gp.iloc[i]
+                next = gp.iloc[i+1]
+
+                for t in range(int(now['timestamp']),int(next['timestamp'])):
+                    plot = self.station2box[str(int(now['newPlot']))]
+                    if json[t].__contains__(plot):  # 网格层次会重复
+                        json[t][plot] += 1
+                    else:
+                        json[t][plot] = 1
 
         self.saveJson(json,self.finalDir+'spaceVolumeDataset.json')
 
