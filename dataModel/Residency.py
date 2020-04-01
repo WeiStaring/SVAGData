@@ -1,9 +1,14 @@
 import pandas as pd
 import numpy as np
 import warnings
+import json
 
 warnings.filterwarnings('ignore')
+# 设置以utf-8解码模式读取文件，encoding参数必须设置，否则默认以gbk模式读取文件，当文件中包含中文时，会报错
+f = open("../finalData/station2box.json", encoding='utf-8')
+station2box= json.load(f)
 stayPoint=pd.read_csv("../resultData/stayPoint.csv")
+station=pd.read_csv('../finalData/newStation.csv')
 
 # 使用工作、居住停留点的时间分布特征对stayPoint类型进行判断
 # 居住时段 0：00-7：00 20：00-0：00
@@ -18,6 +23,20 @@ time17=pd.Timestamp(2018,10,3,17)
 time20=pd.Timestamp(2018,10,3,20)
 time24=pd.Timestamp(2018,10,4,0)
 
+def getType(x):
+    if (x['homeCount'] > x['workCount']):
+        return "home"
+    if (x['homeCount'] < x['workCount']):
+        return "work"
+
+    return "home&work"
+
+def findPlot(lat, lon, station):
+    station['x'] = lat - station['latitude']
+    station['y'] = lon - station['longitude']
+    station['dist'] = station['x'] ** 2 + station['y'] ** 2
+    id = station['dist'].idxmin()
+    return id
 
 def isHome(x):
     morning=x['start']>time0 and x['end']<time7
@@ -58,8 +77,10 @@ candidateWork=validStay[validStay['work']]
 # 包含轨迹点数问题
 
 
-home=pd.DataFrame(columns=('imsi','longitude','latitude'))
-work=pd.DataFrame(columns=('imsi','longitude','latitude'))
+home=pd.DataFrame(columns=('imsi','longitude','latitude','plot','box'))
+work=pd.DataFrame(columns=('imsi','longitude','latitude','plot','box'))
+
+
 
 listType = candidateHome['imsi'].unique()
 userNum=listType.size
@@ -68,12 +89,16 @@ for i in range(0,userNum):
     tempUser=candidateHome[candidateHome['imsi'].isin([listType[i]])]
     lon=tempUser['longitude'].mean()
     lat=tempUser['latitude'].mean()
+    plot = findPlot(lat, lon, station)
+    box = station2box[str(plot)]
     userID = listType[i]
-    temp = pd.DataFrame([userID, lon, lat]).T
+    temp = pd.DataFrame([userID, lon, lat,plot,box]).T
 
     # 修改：不这么写的话 由于类型问题 会导致imsi出错
     temp[0] = temp[0].astype(int)
     temp[0] = userID
+    temp[3] = temp[3].astype(int)
+    temp[4] = temp[4].astype(int)
     # 修改当前数据的column一致
     temp.columns = home.columns
     # 把两个dataframe合并，需要设置 ignore_index=True
@@ -87,18 +112,47 @@ for i in range(0, userNum):
     tempUser = candidateWork[candidateWork['imsi'].isin([listType[i]])]
     lon = tempUser['longitude'].mean()
     lat = tempUser['latitude'].mean()
+    plot = findPlot(lat, lon, station)
+    box = station2box[str(plot)]
     userID = listType[i]
-    temp = pd.DataFrame([userID, lon, lat]).T
+    temp = pd.DataFrame([userID, lon, lat,plot,box]).T
 
     # 修改：不这么写的话 由于类型问题 会导致imsi出错
     temp[0] = temp[0].astype(int)
     temp[0] = userID
+    temp[3] = temp[3].astype(int)
+    temp[4] = temp[4].astype(int)
     # 修改当前数据的column一致
     temp.columns = work.columns
     # 把两个dataframe合并，需要设置 ignore_index=True
     work = pd.concat([work,temp], ignore_index=True)
 
 
-home.to_csv("../resultData/home.csv")
-work.to_csv("../resultData/work.csv")
+
+homeCounts=home['box'].value_counts()
+tempDict= {'box':homeCounts.index,'homeCount':homeCounts.values}
+df_home = pd.DataFrame(tempDict)
+df_home=df_home.sort_values(['box'])
+df_home.reset_index(drop=True, inplace=True)
+
+
+workCounts=work['box'].value_counts()
+tempDict= {'box':workCounts.index,'workCount':workCounts.values}
+df_work = pd.DataFrame(tempDict)
+df_work=df_work.sort_values(['box'])
+df_work.reset_index(drop=True, inplace=True)
+
+
+
+df=pd.merge(df_home,df_work,how='outer')
+df=df.sort_values(['box'])
+df.reset_index(drop=True, inplace=True)
+df=df.where(df.notnull(), 0)
+df['type']=df.apply(getType,axis=1)
+print(df)
+
+
+
+df.to_csv("../resultData/boxType.csv")
+
 
