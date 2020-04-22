@@ -178,11 +178,12 @@ for i in range(0,userNum):
             # print(-1,tempCluster['imsi'])
 
 tempRes["imsi"] = tempRes["imsi"].astype("int")
+tempRes=tempRes.sort_values(['imsi','start'])
 tempRes.to_csv('../resultData/tempRes.csv', index=False)
 
 # 以人为单位，按出发时间排序
 stayPoint=stayPoint.sort_values(['imsi','start'])
-tempRes=tempRes.sort_values(['imsi','start'])
+# tempRes=tempRes.sort_values(['imsi','start'])
 
 print(userNum)
 listType = tempRes['imsi'].unique()
@@ -196,8 +197,8 @@ for i in range(0,userNum):
     entryNum=tempUser.shape[0]
     for j in range(0,entryNum-1):
 
-        start=tempUser.iloc[j, 3]
-        end=tempUser.iloc[j+1, 4]
+        start=tempUser.iloc[j, 4]
+        end=tempUser.iloc[j+1, 3]
         startPlot=tempUser.iloc[j, 6]
         endPlot=tempUser.iloc[j+1, 5]
         # 分钟，千米，千米/时
