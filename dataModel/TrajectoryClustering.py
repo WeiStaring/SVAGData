@@ -8,6 +8,16 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
+
+
+def isOutlier(travelTime):
+    res = stayRange[(stayRange['start'] < travelTime['date_time']) & (stayRange['end'] > travelTime['date_time'])]
+    if(res.size!=0):
+        print(userID)
+        return False
+    return True
+
+
 def plotFeature(df_clustering):
     data=df_clustering[['longitude', 'latitude']].values
     labels_=df_clustering.iloc[:,5].values
@@ -45,7 +55,7 @@ df.drop(['timestamp'], inplace=True, axis=1)
 
 # TODO 调参
 # STDBSCAN参数
-spatial_threshold = 2000 # meters
+spatial_threshold = 3000 # meters
 temporal_threshold = 60  # minutes
 min_neighbors = 2
 
@@ -96,9 +106,14 @@ tempRes=pd.DataFrame(columns=('imsi','longitude','latitude','start','end','start
 """""
 处理聚类结果
 
+
 1.stayPoint:
     将每一类的数据计算成一条新的数据（类别不为-1）
     imsi-longitude-latitude-newPlot-start-end
+    
+    
+1.5 将某一类中间出现的clusterID为-1的点删除
+
 
 2.tempRes:
     将stayPoint中数据的newPlot属性改为startPlot和endPlot
@@ -109,7 +124,7 @@ tempRes=pd.DataFrame(columns=('imsi','longitude','latitude','start','end','start
     遍历tempRes将每一条的start(Plot)和下一条的end(Plot)形成一条新的数据
 
 """""
-
+stayRange=pd.DataFrame(columns=( 'start', 'end'))
 for i in range(0,userNum):
     tempUser = cluster_res[cluster_res['imsi'].isin([listType[i]])]
     userID=listType[i]
@@ -118,9 +133,15 @@ for i in range(0,userNum):
 
     clusterType=tempUser['cluster'].unique()
     clusterNum=clusterType.size
+    clusterType=np.sort(clusterType)
+
+    if(clusterType.size==1):
+        print(clusterType,userID)
+
+    stayRange=pd.DataFrame(columns=( 'start', 'end'))
 
 
-    for j in range(0,clusterNum):
+    for j in range(1,clusterNum):
 
         tempCluster=tempUser[tempUser['cluster'].isin([clusterType[j]])]
         clusterID=tempCluster.iloc[0,5]
@@ -158,24 +179,50 @@ for i in range(0,userNum):
             stayPoint = pd.concat([stayPoint, stay_tmp], ignore_index=True)
             tempRes = pd.concat([tempRes, temp], ignore_index=True)
 
+            range22=pd.DataFrame([start,end]).T
+            range22.columns=stayRange.columns
+            stayRange=pd.concat([stayRange, range22], ignore_index=True)
+
 
             # print(temp['imsi'])
             # print(stay_tmp['imsi'])
 
 
         # 出行点
-        else:
-            tempCluster['start']=tempCluster['date_time']
-            tempCluster['end'] = tempCluster['date_time']
-            tempCluster['startPlot']=tempCluster['newPlot']
-            tempCluster['endPlot']=tempCluster['newPlot']
-            tempCluster.drop(['cluster'], inplace=True, axis=1)
-            tempCluster.drop(['date_time'], inplace=True, axis=1)
-            tempCluster.drop(['newPlot'], inplace=True, axis=1)
+        # else:
+            # tempCluster['start']=tempCluster['date_time']
+            # tempCluster['end'] = tempCluster['date_time']
+            # tempCluster['startPlot']=tempCluster['newPlot']
+            # tempCluster['endPlot']=tempCluster['newPlot']
+            # tempCluster.drop(['cluster'], inplace=True, axis=1)
+            # tempCluster.drop(['date_time'], inplace=True, axis=1)
+            # tempCluster.drop(['newPlot'], inplace=True, axis=1)
+            #
+            #
+            # tempRes = pd.concat([tempRes, tempCluster], ignore_index=True)
 
 
-            tempRes = pd.concat([tempRes, tempCluster], ignore_index=True)
-            # print(-1,tempCluster['imsi'])
+
+# cluster为-1的点
+
+
+    tempCluster = tempUser[tempUser['cluster'].isin([clusterType[0]])]
+
+
+    clusterID = tempCluster.iloc[0, 5]
+    tempCluster = tempCluster[tempCluster.apply(isOutlier, axis=1) == True]
+
+    tempCluster['start']=tempCluster['date_time']
+    tempCluster['end'] = tempCluster['date_time']
+    tempCluster['startPlot']=tempCluster['newPlot']
+    tempCluster['endPlot']=tempCluster['newPlot']
+    tempCluster.drop(['cluster'], inplace=True, axis=1)
+    tempCluster.drop(['date_time'], inplace=True, axis=1)
+    tempCluster.drop(['newPlot'], inplace=True, axis=1)
+
+
+    tempRes = pd.concat([tempRes, tempCluster], ignore_index=True)
+
 
 tempRes["imsi"] = tempRes["imsi"].astype("int")
 tempRes=tempRes.sort_values(['imsi','start'])
