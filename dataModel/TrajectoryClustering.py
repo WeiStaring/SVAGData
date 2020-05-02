@@ -55,9 +55,9 @@ df.drop(['timestamp'], inplace=True, axis=1)
 
 # TODO 调参
 # STDBSCAN参数
-spatial_threshold = 3000 # meters
-temporal_threshold = 60  # minutes
-min_neighbors = 2
+spatial_threshold = 1500 # meters
+temporal_threshold = 200  # minutes
+min_neighbors = 1
 
 # 按id划分用户
 listType = df['imsi'].unique()
@@ -140,13 +140,12 @@ for i in range(0,userNum):
 
     stayRange=pd.DataFrame(columns=( 'start', 'end'))
 
-
+    # 驻留点
     for j in range(1,clusterNum):
 
         tempCluster=tempUser[tempUser['cluster'].isin([clusterType[j]])]
         clusterID=tempCluster.iloc[0,5]
 
-        # 驻留点
         if(clusterID!=-1):
             start=tempCluster['date_time'].min()
             end=tempCluster['date_time'].max()
@@ -183,31 +182,22 @@ for i in range(0,userNum):
             range22.columns=stayRange.columns
             stayRange=pd.concat([stayRange, range22], ignore_index=True)
 
-
-            # print(temp['imsi'])
-            # print(stay_tmp['imsi'])
-
-
         # 出行点
         # else:
-            # tempCluster['start']=tempCluster['date_time']
-            # tempCluster['end'] = tempCluster['date_time']
-            # tempCluster['startPlot']=tempCluster['newPlot']
-            # tempCluster['endPlot']=tempCluster['newPlot']
-            # tempCluster.drop(['cluster'], inplace=True, axis=1)
-            # tempCluster.drop(['date_time'], inplace=True, axis=1)
-            # tempCluster.drop(['newPlot'], inplace=True, axis=1)
-            #
-            #
-            # tempRes = pd.concat([tempRes, tempCluster], ignore_index=True)
+        #     tempCluster['start']=tempCluster['date_time']
+        #     tempCluster['end'] = tempCluster['date_time']
+        #     tempCluster['startPlot']=tempCluster['newPlot']
+        #     tempCluster['endPlot']=tempCluster['newPlot']
+        #     tempCluster.drop(['cluster'], inplace=True, axis=1)
+        #     tempCluster.drop(['date_time'], inplace=True, axis=1)
+        #     tempCluster.drop(['newPlot'], inplace=True, axis=1)
+        #
+        #
+        #     tempRes = pd.concat([tempRes, tempCluster], ignore_index=True)
 
 
-
-# cluster为-1的点
-
-
+    # 出行点
     tempCluster = tempUser[tempUser['cluster'].isin([clusterType[0]])]
-
 
     clusterID = tempCluster.iloc[0, 5]
     tempCluster = tempCluster[tempCluster.apply(isOutlier, axis=1) == True]
@@ -219,7 +209,6 @@ for i in range(0,userNum):
     tempCluster.drop(['cluster'], inplace=True, axis=1)
     tempCluster.drop(['date_time'], inplace=True, axis=1)
     tempCluster.drop(['newPlot'], inplace=True, axis=1)
-
 
     tempRes = pd.concat([tempRes, tempCluster], ignore_index=True)
 
@@ -258,9 +247,12 @@ for i in range(0,userNum):
         travel_tmp.columns = travelPath.columns
         travelPath = pd.concat([travelPath, travel_tmp], ignore_index=True)
 
+# 去除startPlot==endPlot,distance=0的情况
+travelPath=travelPath[travelPath['startPlot']!=travelPath['endPlot']]
 
 stayPoint.to_csv('../resultData/stayPoint.csv', index=False)
 travelPath.to_csv('../resultData/travelPath.csv', index=False)
+
 
 
 
