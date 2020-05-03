@@ -49,7 +49,7 @@ def showClusterRes():
 
     print(fileName)
 
-    for i in range(0,3):
+    for i in range(12,13):
         print("用户", i)
         tempUser=df[df['imsi'].isin([listType[i]])]
         entryNum=tempUser.shape[0]
@@ -98,13 +98,13 @@ def showTravelPath():
 
             # 出行时间为负数
 
-            # if(start>end):
-            #     print([start, end, startPlot, endPlot])
+            if(start>end):
+                print([i,start, end, startPlot, endPlot,distance])
 
             # 出行距离为0
-            # if(startPlot==endPlot):
-            #     continue
-            print([i,start, end, startPlot, endPlot,distance])
+            if(startPlot==endPlot):
+                continue
+            # print([i,start, end, startPlot, endPlot,distance])
             if(startPlot==endPlot and distance==0):
                 count2+=1
             if(startPlot==endPlot and distance!=0):
@@ -117,7 +117,7 @@ def showTravelPath():
 
     print("______________________________________________________________________________________")
 
-showClusterRes()
+# showClusterRes()
 # showTempRes()
 showTravelPath()
 

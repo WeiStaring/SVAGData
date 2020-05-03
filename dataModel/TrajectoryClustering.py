@@ -55,9 +55,9 @@ df.drop(['timestamp'], inplace=True, axis=1)
 
 # TODO 调参
 # STDBSCAN参数
-spatial_threshold = 1500 # meters
-temporal_threshold = 200  # minutes
-min_neighbors = 1
+spatial_threshold = 1850 # meters
+temporal_threshold = 60  # minutes
+min_neighbors = 5
 
 # 按id划分用户
 listType = df['imsi'].unique()
@@ -261,3 +261,48 @@ travelPath.to_csv('../resultData/travelPath.csv', index=False)
 
 
 
+
+
+def showTravelPath():
+
+    df = travelPath
+
+    listType = df['imsi'].unique()
+    userNum = listType.size
+
+
+    for i in range(0,userNum):
+
+        # print("用户",i)
+        tempUser = df[df['imsi'].isin([listType[i]])]
+        entryNum = tempUser.shape[0]
+
+
+        tempUser['start'] = pd.to_datetime(tempUser['start'] + 28800000, unit='ms')
+        tempUser['end'] = pd.to_datetime(tempUser['end'] + 28800000, unit='ms')
+
+        for j in range(0, entryNum):
+            start = tempUser.iloc[j, 1]
+            end = tempUser.iloc[j, 2]
+
+            startPlot=tempUser.iloc[j, 3]
+            endPlot=tempUser.iloc[j,4]
+            # print([start, end, startPlot, endPlot])
+            distance=tempUser.iloc[j,6]
+
+            # 出行时间为负数
+
+            if(start>end):
+                print([i,start, end, startPlot, endPlot,distance])
+
+            # 出行距离为0
+            # if(startPlot==endPlot):
+            #     continue
+            # print([i,start, end, startPlot, endPlot,distance])
+            # if(startPlot==endPlot and distance==0):
+            #     count2+=1
+            # if(startPlot==endPlot and distance!=0):
+            #     count3+=1
+
+    print("______________________________________________________________________________________")
+showTravelPath()
